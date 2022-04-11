@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+
 import { signIn, getNotes } from './store';
 
 class SignIn extends React.Component{
@@ -12,11 +13,11 @@ class SignIn extends React.Component{
     };
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-  }
+  };
 
   onChange (ev) {
     this.setState({ [ev.target.name]: ev.target.value });
-  }
+  };
 
   async onSubmit(ev){
     ev.preventDefault();
@@ -31,7 +32,8 @@ class SignIn extends React.Component{
       console.log(ex);
       this.setState({ error: ex.response.data.error });
     }
-  }
+  };
+
   render(){
     const { onChange, onSubmit } = this;
     const { username, password, error } = this.state;
@@ -43,8 +45,8 @@ class SignIn extends React.Component{
         <button>Sign In</button>
       </form>
     );
-  }
-}
+  };
+};
 
 const mapDispatch = (dispatch)=> {
   return {

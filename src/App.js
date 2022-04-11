@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { connect } from 'react-redux';
-import { attemptLogin } from './store';
 import { Route, Switch, Redirect } from 'react-router-dom';
+
+import { attemptLogin } from './store';
 import Home from './Home';
 import Notes from './Notes';
 import SignIn from './SignIn';
@@ -32,15 +32,15 @@ class App extends Component{
           <Redirect to='/home' />
         </Switch>
       );
-    }
-  }
-}
+    };
+  };
+};
 
 const mapState = state => state;
 const mapDispatch = (dispatch)=> {
   return {
     attemptLogin: () => dispatch(attemptLogin())
-  }
-}
+  };
+};
 
 export default connect(mapState, mapDispatch)(App);

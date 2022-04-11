@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { logout, getNotes } from "./store";
 import { Link } from "react-router-dom";
+
+import { logout, getNotes } from "./store";
 
 class Home extends Component {
   async componentDidMount() {
     await this.props.getNotes();
-  }
+  };
 
   render() {
     const { auth, logout, notes } = this.props;
@@ -21,8 +22,8 @@ class Home extends Component {
         </div>
       </div>
     );
-  }
-}
+  };
+};
 
 const mapState = (state) => state;
 const mapDispatch = (dispatch) => {

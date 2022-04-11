@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { addNote, deleteNote } from "./store";
 import { Link } from "react-router-dom";
+
+import { addNote, deleteNote } from "./store";
 
 class Notes extends Component {
   state = {
@@ -46,8 +47,8 @@ class Notes extends Component {
         </div>
       </div>
     );
-  }
-}
+  };
+};
 
 const mapStateToProps = (state) => ({ notes: state.notes });
 const mapDispatchToProps = (dispatch) => ({
