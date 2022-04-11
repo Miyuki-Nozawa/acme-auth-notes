@@ -1,42 +1,87 @@
-const express = require('express');
+const jwt = require('jsonwebtoken');
+const express = require("express");
 const app = express();
 app.use(express.json());
-const { models: { User }} = require('./db');
-const path = require('path');
+const {
+  models: { User, Note },
+} = require("./db");
+const path = require("path");
 
-app.use('/dist', express.static(path.join(__dirname, 'dist')));
+app.use("/dist", express.static(path.join(__dirname, "dist")));
 
-app.get('/', (req, res)=> res.sendFile(path.join(__dirname, 'index.html')));
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 
-app.post('/api/auth', async(req, res, next)=> {
+app.post("/api/auth", async (req, res, next) => {
   try {
-    res.send({ token: await User.authenticate(req.body)});
-  }
-  catch(ex){
+    res.send({ token: await User.authenticate(req.body) });
+  } catch (ex) {
     next(ex);
   }
 });
 
-app.get('/api/auth', async(req, res, next)=> {
+app.get("/api/auth", async (req, res, next) => {
   try {
     res.send(await User.byToken(req.headers.authorization));
-  }
-  catch(ex){
+  } catch (ex) {
     next(ex);
   }
 });
 
-app.get('/api/purchases', async(req, res, next)=> {
+app.get("/api/purchases", async (req, res, next) => {
   try {
     const user = await User.byToken(req.headers.authorization);
-    res.send('TODO Send the purchases for this user');
-  }
-  catch(ex){
+    res.send("TODO Send the purchases for this user");
+  } catch (ex) {
     next(ex);
   }
 });
 
-app.use((err, req, res, next)=> {
+app.get("/api/notes", async (req, res, next) => {
+  try {
+    const payload = await jwt.verify(req.headers.authorization, process.env.JWT);
+    console.log("payload: ", payload);
+    const notes = await Note.findAll({
+      where: {
+        userId: payload.id,
+      },
+    });
+    res.send(notes);
+  } catch (ex) {
+    next(ex);
+  }
+});
+
+app.post("/api/notes", async (req, res, next) => {
+  try {
+    const payload = await jwt.verify(req.headers.authorization, process.env.JWT);
+    const response = await Note.create({
+      txt: req.body.txt,
+      userId: payload.id
+    });
+    res.send(response);
+  } catch (ex) {
+    next(ex);
+  }
+});
+
+app.delete("/api/notes/:id", async (req, res, next) => {
+  try {
+    const payload = await jwt.verify(req.headers.authorization, process.env.JWT);
+    const note = await Note.findOne({
+      where: {
+        userId: payload.id,
+        id: req.params.id
+      }
+    });
+    await note.destroy();
+    res.sendStatus(204);
+  }
+  catch (ex) {
+    next(ex);
+  }
+});
+
+app.use((err, req, res, next) => {
   console.log(err);
   res.status(err.status || 500).send({ error: err.message });
 });

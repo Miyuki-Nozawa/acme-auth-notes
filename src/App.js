@@ -1,20 +1,20 @@
-import React from 'react';
-import axios from 'axios';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { attemptLogin, logout } from './store';
 import { Route, Switch, Redirect } from 'react-router-dom';
+
+import { attemptLogin } from './store';
 import Home from './Home';
 import Notes from './Notes';
 import SignIn from './SignIn';
 
 
-class App extends React.Component{
-  componentDidMount(){
-    this.props.attemptLogin();
+class App extends Component{
+  async componentDidMount() {
+    await this.props.attemptLogin();
   }
+
   render(){
     const { auth } = this.props;
-    console.log(auth);
 
     if(!auth.id){
       return (
@@ -32,17 +32,15 @@ class App extends React.Component{
           <Redirect to='/home' />
         </Switch>
       );
-    }
-  }
-}
+    };
+  };
+};
 
 const mapState = state => state;
 const mapDispatch = (dispatch)=> {
   return {
-    attemptLogin: ()=> {
-      return dispatch(attemptLogin());
-    }
-  }
-}
+    attemptLogin: () => dispatch(attemptLogin())
+  };
+};
 
 export default connect(mapState, mapDispatch)(App);

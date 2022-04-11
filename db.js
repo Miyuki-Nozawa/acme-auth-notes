@@ -9,13 +9,22 @@ const config = {
 if(process.env.LOGGING){
   delete config.logging;
 }
-const conn = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost/acme_db', config);
+const conn = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost/acme_auth_notes', config);
 
 const User = conn.define('user', {
   username: STRING,
   password: STRING
 });
 
+const Note = conn.define('note', {
+  txt: STRING,
+});
+
+Note.belongsTo(User);
+User.hasMany(Note);
+
+
+// class methods for User
 User.addHook('beforeSave', async(user)=> {
   if(user.changed('password')){
     const hashed = await bcrypt.hash(user.password, 3);
@@ -69,6 +78,18 @@ const syncAndSeed = async()=> {
   const [lucy, moe, larry] = await Promise.all(
     credentials.map( credential => User.create(credential))
   );
+  const notes = [
+    { txt: 'note 1', userId: lucy.dataValues.id },
+    { txt: 'note 2', userId: lucy.dataValues.id },
+    { txt: 'note 3', userId: lucy.dataValues.id },
+    { txt: 'note 4', userId: moe.dataValues.id },
+    { txt: 'note 5', userId: moe.dataValues.id },
+    { txt: 'note 6', userId: moe.dataValues.id },
+    { txt: 'note 7', userId: larry.dataValues.id },
+    { txt: 'note 8', userId: larry.dataValues.id },
+    { txt: 'note 9', userId: larry.dataValues.id },
+  ];
+  await Promise.all(notes.map(note => Note.create(note)));
   return {
     users: {
       lucy,
@@ -81,6 +102,7 @@ const syncAndSeed = async()=> {
 module.exports = {
   syncAndSeed,
   models: {
-    User
+    User,
+    Note
   }
 };
