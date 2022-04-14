@@ -36,7 +36,7 @@ class Notes extends Component {
               onChange={this.handleChange}
               value={this.state.addNoteText}
             />
-            <button onClick={this.handleSubmit}>Add</button>
+            <button disabled={this.state.addNoteText.length === 0} onClick={this.handleSubmit}>Add</button>
           </form>
           {notes.map((note) => (
             <div key={note.id}>
